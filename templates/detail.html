@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block body%}
+<div class="container">
+        <h1>세부 내용을 알려드립니다.</h1>
+        <br><br>
+        <h1>{{detail.title}}</h1>
+        <p>{{detail.pub_date}}</p>
+        <p>{{detail.body}}</p>
+    </div>
+
+
+<form action="{% url 'comment_add' detail.id %}" method="POST">
+    {% csrf_token %}
+    내용 : <input type = "text" name = "body">
+    <input type = "submit" value="제출">
+</form>
+
+{% for comment in detail.comments.all %}
+    {{comment.user.username}} : {{comment.body}}
+    {% if comment.user == request.user %}
+    <a href="{% url 'comment_edit' comment.id %}">편집</a>
+    <a href="javascript:{
+        var form = document.getElementById('delete');
+        form.action = '/blog/comment_delete/{{comment.id}}';
+        form.submit();}">삭제</a>
+    {% endif %}
+    <br>
+{% endfor %}
+
+<form id="delete" method="POST" action="">
+    {% csrf_token %} <input type="hidden">
+</form>
+{% endblock %}
+    
+
